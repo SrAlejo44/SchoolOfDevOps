@@ -1,0 +1,19 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.provider "virtualbox" do |vb|
+      vb.memory = "2048"
+      vb.name = "local-mario"
+  end
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.network "forwarded_port", guest: 21474, host: 21474
+  config.vm.provision "file", source: "./node-mario", destination: "$HOME"
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+    curl -sL https://deb.nodesource.com/setup_12.x | bash -
+    sudo apt install -y nodejs
+    npm install
+  SHELL
+end
