@@ -1,9 +1,9 @@
+ARG nodever=19
+FROM node:${nodever}-alpine AS builder
 ARG PORT=3030
-FROM node:19-alpine
 WORKDIR /app
-COPY package*.json ./
+COPY package*.json /app/
 RUN npm ci
 COPY . .
 EXPOSE ${PORT}
-ENV PORT ${PORT}
 CMD node server.js
