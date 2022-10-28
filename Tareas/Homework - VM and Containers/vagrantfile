@@ -1,18 +1,24 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
 Vagrant.configure("2") do |config|
 
-    config.vm.provider "virtualbox" do |vb1|
-        vb1.vm.network "forwarded_port", guest: 21474, host:21474
-        vb1.memory = "2048"
-        vb1.name = "vb1"
+    config.vm.define "MaquinaVirtual1" do |mv1_config|
+        mv1_config.vm.box = "ubuntu/bionic64"
+        mv1_config.vm.network "forwarded_port", guest: 21474, host: 21474
+        mv1_config.vm.provider "virtualbox" do |vb|
+            vb.name = "MaquinaVirtual1"
+            vb.memory = "2048"
+        end
     end
-    config.vm.provider "virtualbox" do |vb2|
-        vb2.vm.network "forwarded_port", guest: 21475, host:21475
-        vb2.memory = "2048"
-        vb2.name = "vb2"
+
+    config.vm.define "MaquinaVirtual2" do |mv2_config|
+        mv2_config.vm.box = "ubuntu/bionic64"
+        mv2_config.vm.network "forwarded_port", guest: 21475, host: 21475
+        mv2_config.vm.provider "virtualbox" do |vb|
+            vb.name = "MaquinaVirtual2"
+            vb.memory = "2048"
+        end
     end
-    config.vm.box = "ubuntu/bionic64"
-    config.vm.provision "shell", inline: <<-SHELL
-        sudo apt-get update
-        sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
-    SHELL
+
 end
