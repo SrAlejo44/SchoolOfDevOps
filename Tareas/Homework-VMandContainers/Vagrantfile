@@ -13,6 +13,8 @@ Vagrant.configure("2") do |config|
             vb.name = "MaquinaVirtual1"
             vb.memory = "2048"
         end
+        mv1_config.vm.provision "file", source: "./DockerFiles/DockerFileBack", destination: "Docker/rampupBackend"
+        mv1_config.vm.provision "file", source: "./DockerFiles/DockerFileFront", destination: "Docker/rampupFrontend"
         mv1_config.vm.provision "shell", inline: <<-SHELL
             sudo apt update
             sudo apt upgrade -y
@@ -22,6 +24,11 @@ Vagrant.configure("2") do |config|
             sudo apt update
             apt-cache policy docker-ce
             sudo apt install -y docker-ce
+            mkdir Repositorio
+            cd Repositorio
+            git clone https://gitlab.com/matiasnicolas.vargas/schoolofdevopsdocker.git
+            mv /home/vagrant/Docker/rampupBackend/dockerfile /home/vagrant/Repositorio/schoolofdevopsdocker/rampupBackend
+            mv /home/vagrant/Docker/rampupFrontend/dockerfile /home/vagrant/Repositorio/schoolofdevopsdocker/rampupFrontend
         SHELL
     end
     config.vm.define "MaquinaVirtual2" do |mv2_config|
@@ -33,7 +40,9 @@ Vagrant.configure("2") do |config|
         mv2_config.vm.provider "virtualbox" do |vb|
             vb.name = "MaquinaVirtual2"
             vb.memory = "2048"
-        end 
+        end
+        mv2_config.vm.provision "file", source: "./DockerFiles/DockerFileBack", destination: "Docker/rampupBackend"
+        mv2_config.vm.provision "file", source: "./DockerFiles/DockerFileFront", destination: "Docker/rampupFrontend"
         mv2_config.vm.provision "shell", inline: <<-SHELL
             sudo apt update
             sudo apt upgrade -y
@@ -43,6 +52,11 @@ Vagrant.configure("2") do |config|
             sudo apt update
             apt-cache policy docker-ce
             sudo apt install -y docker-ce
+            mkdir Repositorio
+            cd Repositorio
+            git clone https://gitlab.com/matiasnicolas.vargas/schoolofdevopsdocker.git
+            mv /home/vagrant/Docker/rampupBackend/dockerfile /home/vagrant/Repositorio/schoolofdevopsdocker/rampupBackend
+            mv /home/vagrant/Docker/rampupFrontend/dockerfile /home/vagrant/Repositorio/schoolofdevopsdocker/rampupFrontend
         SHELL
     end
 end
