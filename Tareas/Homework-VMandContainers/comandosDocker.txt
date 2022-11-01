@@ -1,0 +1,15 @@
+            sudo service docker start
+            sudo groupadd docker
+            sudo usermod -aG docker ${USER}
+            su -s ${USER}
+            cd /home/vagrant/Repositorio/schoolofdevopsdocker/rampupBackend
+            docker build -t rampup:Backend .
+            cd /home/vagrant/Repositorio/schoolofdevopsdocker/rampupFrontend
+            docker build -t rampup:Frontend .
+
+            docker swarm init #Sera la instancia manager
+            docker node ls #ver los nodos unidos
+
+            docker service create --replicas 2 --name Backend rampup:Backend --constraint 
+            docker service create --name Frontend rampup:Backend --constraint 
+            docker service create --name DataBase mysql --constraint 
