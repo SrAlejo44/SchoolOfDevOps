@@ -1,0 +1,27 @@
+build image:
+  stage: build
+  image: docker
+  services:
+    - docker:dind
+  script:
+      - cd ServidorMinecraft
+      - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+      - echo "Building dockerfile....."
+      - docker build -t $CI_REGISTRY_IMAGE .
+      - echo "Registry dockerfile"
+      - docker push $CI_REGISTRY_IMAGE
+    
+test:
+    image: $CI_REGISTRY_IMAGE
+    stage: test
+    script:
+      - echo "Testing if the image exist..."
+
+deploy:
+    stage: deploy
+    image: docker
+    services:
+      - docker:dind
+    script:
+      - echo "Finish the pipeland"
+      - docker push $CI_REGISTRY_IMAGE:tested

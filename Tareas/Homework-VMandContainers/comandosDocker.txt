@@ -11,5 +11,5 @@
             docker node ls #ver los nodos unidos
 
             docker service create --replicas 2 --name Backend rampup:Backend --constraint 
-            docker service create --name Frontend rampup:Backend --constraint 
+            docker service create --name Frontend rampup:Frontend --constraint 
             docker service create --name DataBase mysql --constraint 

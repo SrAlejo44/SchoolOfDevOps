@@ -1,0 +1,6 @@
+FROM openjdk
+COPY . ./app
+WORKDIR /app
+RUN ls -al
+EXPOSE 25565
+ENTRYPOINT ["java", "-jar", "server.jar"]
