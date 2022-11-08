@@ -1,0 +1,43 @@
+version: "3.3"
+
+services:
+  nginx:
+    image: xcgd/nginx-vts:stable
+    ports:
+      - "80:80"
+      - "81:81"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+  cadvisor:
+    privileged: true
+    image: gcr.io/cadvisor/cadvisor
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys/fs/cgroup/cpu,cpuacct:/sys/fs/cgroup/cpuacct,cpu
+      - /var/lib/docker/:/var/lib/docker:ro
+  postgres:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    volumes:
+      - ./backup:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: shop
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter
+    ports:
+      - 9187:9187
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:postgrespassword@postgres:5432/shop?sslmode=disable"
+    links:
+      - postgres
+     

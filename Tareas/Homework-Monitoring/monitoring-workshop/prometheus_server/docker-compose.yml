@@ -1,0 +1,66 @@
+version: "3.3"
+services:
+  prometheus:
+    image: "prom/prometheus"
+    ports:
+      - "9090:9090"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/data"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+      #- "--web.config.file=/etc/prometheus/web.yml"
+    volumes:
+      - "/opt/prometheus/data/:/data/"
+      - "./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "./prometheus/rules/:/etc/prometheus/rules/"
+      #- "./prometheus/web.yml:/etc/prometheus/web.yml"
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+
+  grafana:
+    image: "grafana/grafana-oss"
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: "admin"
+    volumes:
+      - "/opt/grafana/data:/var/lib/grafana"
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+
+  alertmanager:
+    image: "quay.io/prometheus/alertmanager"
+    ports:
+      - "9093:9093"
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+      - "--storage.path=/data"
+      #- "--web.config.file=/etc/alertmanager/web.yml"
+    volumes:
+      - "/opt/alertmanager/data/:/data/"
+      - "./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml"
+      #- "./alertmanager/web.yml:/etc/alertmanager/web.yml"
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+
+  promtwoteams:
+    image: "idealista/prom2teams"
+    ports:
+      - "9094:8089"
+    volumes:
+      - "./prom2teams/config.ini:/opt/prom2teams/config.ini"
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"

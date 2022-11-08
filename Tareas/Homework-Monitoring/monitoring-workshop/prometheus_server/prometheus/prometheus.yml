@@ -1,0 +1,62 @@
+global:
+  scrape_interval: 5s # how frequent is the metrics pull
+  scrape_timeout: 3s # how long until a scrape (pull) request times out
+  evaluation_interval: 5s # how often to evaluate rules
+
+  external_labels: # add labels to alertmanager, remote storage, federation
+      origin: prometheus_demo
+      foo: bar
+
+scrape_configs:
+  - job_name: nginx
+    #scrape_interval: 15s
+    #scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: http # or https
+    static_configs:
+    - targets:
+      - 10.20.30.3:81
+      labels:
+        component: proxy
+    # azure_sd_configs: []
+    # consul_sd_configs: []
+    # digitalocean_sd_configs: []
+    # docker_sd_configs: []
+    # a long etc ...
+
+  - job_name: cadvisor
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+    - targets:
+      - 10.20.30.3:8080
+      labels:
+        component: container
+
+  - job_name: node_exporter
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+    - targets:
+      - 10.20.30.3:9100
+      labels:
+        component: machine
+
+alerting:
+  alertmanagers:
+  - scheme: http
+    timeout: 10s
+    static_configs:
+    - targets:
+      - alertmanager:9093
+      labels:
+        component: alertmanager
+
+rule_files:
+- /etc/prometheus/rules/*.yml
+
+# remote_read: # where to read the metrics from https://prometheus.io/docs/operating/integrations/#remote-endpoints-and-storage
+
+# remote_write: # where to write the metrics to
+
+# storage # settings that are runtime reloadable

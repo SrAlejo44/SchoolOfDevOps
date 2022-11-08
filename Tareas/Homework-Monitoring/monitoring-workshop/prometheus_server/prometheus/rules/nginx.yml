@@ -1,0 +1,33 @@
+groups:
+  - name: nginx
+    rules:
+      - alert: NginxFiveHundredRequests
+        expr: sum by (instance)(rate(nginx_vts_server_requests_total{code="5xx"}[1m])) / sum by (instance)(rate(nginx_vts_server_requests_total[1m])) * 100 > 5
+        for: 3m
+        labels:
+          severity: warning
+          type: server_error
+          group: nginx
+        annotations:
+          summary: Nginx 5xx responses on (instance {{$labels.instance}})
+          description: "More than 5% of the server requests over one (1) minute are 5xx.\n  VALUE =   {{$value}}  \n  LABELS =   {{$labels}}"
+      - alert: NginxFourHundredRequests
+        expr: sum by (instance)(rate(nginx_vts_server_requests_total{code="4xx"}[1m])) / sum by (instance)(rate(nginx_vts_server_requests_total[1m])) * 100 > 10
+        for: 5m
+        labels:
+          severity: warning
+          type: client_error
+          group: nginx
+        annotations:
+          summary: Nginx 4xx responses on (instance {{$labels.instance}})
+          description: "More than 10% of the server requests over five (5) minutes are 4xx.\n  VALUE =   {{$value}}  \n  LABELS =   {{$labels}}"
+      - alert: NginxTooManyActiveConnections
+        expr: nginx_vts_main_connections{status="active"} > 100
+        for: 3m
+        labels:
+          severity: warning
+          type: connections
+          group: nginx
+        annotations:
+          summary: Too many active connections (>100) (instance {{$labels.instance}})
+          description: "More than 100 active connections in 1 minute on the nginx server \n  VALUE =   {{$value}}  \n  LABELS =   {{$labels}}"

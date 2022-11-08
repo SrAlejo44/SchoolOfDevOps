@@ -1,0 +1,16 @@
+global:
+  resolve_timeout: 5m # change received alerts as "resolved" when they don't have EndsAt field. (Prometheus always has this field)
+
+route:
+  group_by: ['severity', 'type']
+  group_wait: 15s # Wait to send a notification for this group
+  group_interval: 1m # Wait to send a notifications for new alerts added (already sent notifications of the same group)
+  repeat_interval: 1h # Wait to send a notification again (already sent notifications of the same group)
+  receiver: ms-teams-receiver
+  # route:
+
+receivers:
+  - name: ms-teams-receiver
+    webhook_configs:
+      - send_resolved: true
+        url: http://promtwoteams:8089/v2/monitoring-demo-connector

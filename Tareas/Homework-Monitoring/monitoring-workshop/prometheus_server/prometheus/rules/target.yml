@@ -1,0 +1,13 @@
+groups:
+  - name: prometheus
+    rules:
+      - alert: PrometheusTargetMissing
+        expr: up == 0
+        for: 15s
+        labels:
+          severity: critical
+          type: up
+          group: prometheus
+        annotations:
+          summary: Prometheus target missing (instance {{$labels.instance}})
+          description: "A Prometheus target has disappeared. An exporter might be crashed.\n  VALUE = {{$value}} \n  LABELS =  {{$labels}}"

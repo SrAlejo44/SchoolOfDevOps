@@ -1,0 +1,37 @@
+Vagrant.configure("2") do |config|
+
+	config.vm.box = "geerlingguy/centos7"
+	config.vm.network "public_network"
+
+	config.vm.define "monitoring1" do |monitoring1|
+
+		monitoring1.vm.network "private_network", ip: "10.20.30.3"
+
+		monitoring1.vm.provision "shell", path: "provision/provision.sh"
+
+		monitoring1.vm.synced_folder ".", "/vagrant"
+
+		monitoring1.vm.provider "virtualbox" do |vb|
+			vb.memory = 1024
+			vb.cpus = 1
+		end
+
+	end
+
+	config.vm.define "monitoring2" do |monitoring2|
+
+		monitoring2.vm.network "private_network", ip: "10.20.30.4"
+
+        monitoring2.vm.provision "shell", path: "provision/provision.sh"
+		monitoring2.vm.provision "shell", path: "provision/provision_prome.sh"
+
+		monitoring2.vm.synced_folder ".", "/vagrant"
+
+		monitoring2.vm.provider "virtualbox" do |vb|
+			vb.memory = 2048
+			vb.cpus = 2
+		end
+
+	end
+	
+end
